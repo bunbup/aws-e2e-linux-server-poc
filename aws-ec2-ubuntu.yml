@@ -1,0 +1,33 @@
+---
+ - name: Working with AWS EC2 Instance
+   hosts: localhost
+   connection: local
+   gather_facts: false
+   tasks:
+     - name: Create ec2 instance
+       ec2:
+         instance_type: t2.micro
+         image: ami-03d5c68bab01f3496 
+         count: 1
+         key_name: ssh-1
+         wait: yes
+         group: default 
+         region: us-west-2
+         vpc_subnet_id: subnet-0fecf68a8da684898
+         assign_public_ip: yes
+         instance_tags:
+           Name: brt-test
+       register: testhost
+     - name: Add new instance to host group
+       add_host:
+         hostname: "{{ item.public_ip }}"
+         groupname: awshost
+       with_items: "{{ testhost.instances }}"
+     - name: Wait for SSH to come up
+       wait_for:
+         host: "{{ item.public_dns_name }}"
+         port: 22
+         delay: 60
+         timeout: 320
+         state: started
+       with_items: "{{ testhost.instances }}"
