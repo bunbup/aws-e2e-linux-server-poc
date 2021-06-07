@@ -20,6 +20,9 @@ jobs:
           ansible
           boto
           boto3
+          
+    - name: run ansible-playbook
+      run: ansible-playbook
 
     - name: Upload Test Reports Folder
       uses: actions/upload-artifact@v2
