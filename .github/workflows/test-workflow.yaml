@@ -2,12 +2,25 @@ name: test-workflow
 on: [push]
 jobs:
   tests:
-    runs-on: macos-latest
+    runs-on: ubuntu-20.04
     steps:
     - name: checkout
       uses: actions/checkout@v2
 
-      
+    - name: install python
+      uses: actions/setup-python@v1
+
+    - name: install python
+      uses: actions/setup-python@v1
+
+    - name: install ansible
+      uses: BSFishy/pip-action@v1
+      with:
+        packages: |
+          ansible
+          boto
+          boto3
+
     - name: Upload Test Reports Folder
       uses: actions/upload-artifact@v2
       if: ${{ always() }} # IMPORTANT: Upload reports regardless of status
