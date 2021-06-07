@@ -1,0 +1,16 @@
+name: test-workflow
+on: [push]
+jobs:
+  tests:
+    runs-on: macos-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+
+      
+    - name: Upload Test Reports Folder
+      uses: actions/upload-artifact@v2
+      if: ${{ always() }} # IMPORTANT: Upload reports regardless of status
+      with:
+        name: reports
+        path: output
