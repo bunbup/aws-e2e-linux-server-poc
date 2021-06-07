@@ -1,44 +1,143 @@
 ---
- - name: Working with AWS EC2 Instance
+ - name: Start AWS EC2 Instance
    hosts: localhost
    connection: local
    gather_facts: false
    vars:
-     - region: us-west-2
+     region: us-west-2
+     ami: ami-03d5c68bab01f3496
+     ssh_key: ssh-1
+     subnet_id: subnet-0fecf68a8da684898
+     name_tag: brt-test
    tasks:
-     - name: Create ec2 instance
+     - name: Create EC2 instance
        ec2:
-         instance_type: t2.micro
-         image: ami-03d5c68bab01f3496 
+         instance_type: t2.medium
+         image: "{{ ami }}"
          count: 1
-         key_name: ssh-1
+         key_name: "{{ ssh_key }}"
          wait: yes
          group: default 
          region: "{{ region }}"
-         vpc_subnet_id: subnet-0fecf68a8da684898
+         vpc_subnet_id: "{{ subnet_id }}"
          assign_public_ip: yes
          instance_tags:
-           Name: brt-test
+           Name: "{{ name_tag }}"
        register: testhost
      - name: Add new instance to host group
        add_host:
-         hostname: "{{ item.public_ip }}"
+         hostname: "{{ testhost.instances[0].public_ip }}"
          groupname: awshost
-       with_items: "{{ testhost.instances }}"
      - name: Wait for SSH to come up
        wait_for:
-         host: "{{ item.public_dns_name }}"
+         host: "{{ testhost.instances[0].public_ip }}"
          port: 22
          delay: 60
          timeout: 320
          state: started
-       with_items: "{{ testhost.instances }}"
+       ignore_errors: yes
+
+ - name: Setup EC2 instance
+   hosts: awshost
+   gather_facts: true
+   remote_user: ubuntu
+   become: true
+   vars:
+     ansible_ssh_private_key_file: ~/Downloads/ssh-1.pem
+   tasks:
+     - name: Install JDK 8
+       apt:
+         name: openjdk-11-jdk-headless
+         state: present
+       ignore_errors: yes
+
+ - name: Copy tests
+   hosts: awshost
+   gather_facts: true
+   remote_user: ubuntu
+   vars:
+     ansible_ssh_private_key_file: ~/Downloads/ssh-1.pem
+   tasks:
+     - name: Copy test
+       ansible.builtin.copy:
+         src: test-app
+         dest: /home/ubuntu
+         owner: ubuntu
+       ignore_errors: yes
+     - name: Executable gradlew
+       file:
+         dest: test-app/gradlew
+         mode: a+x
+       ignore_errors: yes
+ - name: Run tests
+   hosts: awshost
+   gather_facts: true
+   remote_user: ubuntu
+   vars:
+     ansible_ssh_private_key_file: ~/Downloads/ssh-1.pem
+   tasks:
+     - name: Execute gradlew test
+       shell:
+         chdir: /home/ubuntu/test-app
+         cmd: ./gradlew test
+       register: testout
+       ignore_errors: yes
+
+ - name: Fetch results
+   hosts: awshost
+   gather_facts: true
+   remote_user: ubuntu
+   vars:
+     ansible_ssh_private_key_file: ~/Downloads/ssh-1.pem
+   tasks:
+     - name: Archive test reports
+       archive:
+         path: /home/ubuntu/test-app/build/reports
+         dest: /home/ubuntu/reports.gzip
+         format: gz
+       ignore_errors: yes
+     - name: Archive test results
+       archive:
+         path: /home/ubuntu/test-app/build/test-results
+         dest: /home/ubuntu/test-results.gzip
+         format: gz
+       ignore_errors: yes
+     - name: Get test reports
+       fetch:
+         src: /home/ubuntu/reports.gzip
+         dest: output/reports.gzip
+         flat: true
+       ignore_errors: yes
+     - name: Get test results
+       fetch:
+         src: /home/ubuntu/test-results.gzip
+         dest: output/test-results.gzip
+         flat: true
+       ignore_errors: yes
+     - name: Get stdout output
+       local_action: copy content="{{ testout.stdout }}" dest="output/stdout.txt"
+       ignore_errors: yes
+     - name: Get stderr output
+       local_action: copy content="{{ testout.stderr }}" dest="output/stderr.txt"
+       ignore_errors: yes
+     - name: Get return code
+       local_action: copy content="{{ testout.rc }}" dest="output/return-code"
+       ignore_errors: yes
+     - name: Get execution time
+       local_action: copy content="{{ testout.delta }}" dest="output/execution-time"
+       ignore_errors: yes
+
+ - name: Terminate EC2 instance
+   hosts: localhost
+   connection: local
+   gather_facts: false
+   vars:
+      region: us-west-2
+   tasks:
      - name: Terminate EC2 instance
-       ec2: 
+       ec2:
          state: "absent"
          instance_ids: "{{ testhost.instance_ids }}"
          region: "{{ region }}"
-       tags: 
-         - always
 
 
