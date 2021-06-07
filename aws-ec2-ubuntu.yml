@@ -21,6 +21,8 @@
          region: "{{ region }}"
          vpc_subnet_id: "{{ subnet_id }}"
          assign_public_ip: yes
+         aws_access_key: "{{ aws_access_key }}"
+         aws_secret_key: "{{ aws_secret_key }}"
          instance_tags:
            Name: "{{ name_tag }}"
        register: testhost
@@ -139,5 +141,7 @@
          state: "absent"
          instance_ids: "{{ testhost.instance_ids }}"
          region: "{{ region }}"
+         aws_access_key: "{{ aws_access_key }}"
+         aws_secret_key: "{{ aws_secret_key }}"
 
 
