@@ -21,6 +21,9 @@ jobs:
           boto
           boto3
           
+    - name: ls
+      run: ls -al
+      
     - name: run ansible-playbook
       run: ansible-playbook
 
