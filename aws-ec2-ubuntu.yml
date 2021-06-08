@@ -48,7 +48,7 @@
      ansible_ssh_private_key_file: ~/ssh-1.pem
    tasks:
      - name: Create private key
-       copy: content="{{ ssh_private_key }}" dest="{{ ansible_ssh_private_key_file }}" mode=0600
+       local_action: content="{{ ssh_private_key }}" dest="{{ ansible_ssh_private_key_file }}" mode=0600
      - name: Install JDK 8
        apt:
          name: openjdk-11-jdk-headless
