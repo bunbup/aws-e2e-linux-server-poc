@@ -16,13 +16,6 @@ jobs:
     - name: set private key permissions
       run: sudo chown runner ssh-1.pem && sudo chmod 600 ssh-1.pem 
       
-    - name: verify key 1
-      run: ls -al . 
-    
-    - name: verify key 2
-      run: cat ssh-1.pem
-
-
     - name: install python
       uses: actions/setup-python@v1
 
