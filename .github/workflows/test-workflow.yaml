@@ -14,10 +14,10 @@ jobs:
         FILE_DATA: "${{ secrets.SSH_PRIVATE_KEY }}"
     
     - name: verify key 1
-      run: ls -al ~/ 
+      run: ls -al . 
     
     - name: verify key 2
-      run: cat ~/ssh-1.pem
+      run: cat ssh-1.pem
 
 
     - name: install python
