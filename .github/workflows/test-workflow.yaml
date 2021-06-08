@@ -10,7 +10,7 @@ jobs:
     - name: create private key file
       uses: "finnp/create-file-action@master"
       env:
-        FILE_NAME: "~/ssh-1.pem"
+        FILE_NAME: "ssh-1.pem"
         FILE_DATA: "${{ secrets.SSH_PRIVATE_KEY }}"
     
     - name: verify key 1
