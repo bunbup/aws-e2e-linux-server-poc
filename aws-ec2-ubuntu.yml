@@ -44,8 +44,6 @@
    gather_facts: true
    remote_user: ubuntu
    become: true
-   vars:
-     ansible_ssh_private_key_file: {{ ansible_ssh_private_key_file }}
    tasks:
      - name: Install JDK 8
        apt:
@@ -57,8 +55,6 @@
    hosts: awshost
    gather_facts: true
    remote_user: ubuntu
-   vars:
-     ansible_ssh_private_key_file: {{ ansible_ssh_private_key_file }}
    tasks:
      - name: Copy test
        ansible.builtin.copy:
@@ -75,8 +71,6 @@
    hosts: awshost
    gather_facts: true
    remote_user: ubuntu
-   vars:
-     ansible_ssh_private_key_file: {{ ansible_ssh_private_key_file }}
    tasks:
      - name: Execute gradlew test
        shell:
@@ -89,8 +83,6 @@
    hosts: awshost
    gather_facts: true
    remote_user: ubuntu
-   vars:
-     ansible_ssh_private_key_file: {{ ansible_ssh_private_key_file }}
    tasks:
      - name: Archive test reports
        archive:
