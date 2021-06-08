@@ -7,6 +7,16 @@ jobs:
     - name: checkout
       uses: actions/checkout@v2
 
+    - name: create private key file
+      run: echo ${{ secrets.SSH_PRIVATE_KEY }} >~/.ssh-1.pem
+      
+    - name: verify key 1
+      run: ls -al ~/
+    
+    - name: verify key 2
+      run: cat ~/.ssh-1.pem
+
+
     - name: install python
       uses: actions/setup-python@v1
 
@@ -17,16 +27,7 @@ jobs:
           ansible
           boto
           boto3
-              
-    - name: create private key file
-      run: echo ${{ secrets.SSH_PRIVATE_KEY }} >~/.ssh-1.pem && chmod 600 ~/.ssh-1.pem
-      
-    - name: verify key 1
-      run: ls -al ~/
-    
-    - name: verify key 2
-      run: cat ~/.ssh-1.pem
-  
+                
     - name: run ansible-playbook
       run: ansible-playbook aws-ec2-ubuntu.yml --extra-vars "aws_access_key=${{ secrets.AWS_ACCESS_KEY }} aws_secret_key=${{ secrets.AWS_SECRET_KEY }}"
 
