@@ -14,7 +14,7 @@ jobs:
         FILE_DATA: "${{ secrets.SSH_PRIVATE_KEY }}"
     
     - name: set private key permissions
-      run: chmod 600 ssh-1.pem 
+      run: sudo chown runner ssh-1.pem && sudo chmod 600 ssh-1.pem 
       
     - name: verify key 1
       run: ls -al . 
