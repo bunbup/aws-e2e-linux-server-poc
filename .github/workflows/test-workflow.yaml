@@ -8,10 +8,10 @@ jobs:
       uses: actions/checkout@v2
 
     - name: create private key file
-      uses: "finnp/create-file-action@master"
+      run: 'echo "$TMP_SSH_KEY" > ssh-1.pem'
+      shell: bash
       env:
-        FILE_NAME: "ssh-1.pem"
-        FILE_DATA: "${{ secrets.SSH_PRIVATE_KEY }}"
+        TMP_SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
     
     - name: set private key permissions
       run: sudo chown runner ssh-1.pem && sudo chmod 600 ssh-1.pem 
