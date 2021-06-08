@@ -115,10 +115,10 @@
        local_action: copy content="{{ testout.stderr }}" dest="output/stderr.txt"
        ignore_errors: yes
      - name: Get return code
-       local_action: copy content="{{ testout.rc }}" dest="output/return-code"
+       local_action: copy content="{{ testout.rc }}" dest="output/return-code.txt"
        ignore_errors: yes
      - name: Get execution time
-       local_action: copy content="{{ testout.delta }}" dest="output/execution-time"
+       local_action: copy content="{{ testout.delta }}" dest="output/execution-time.txt"
        ignore_errors: yes
 
  - name: Terminate EC2 instance
