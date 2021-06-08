@@ -45,8 +45,10 @@
    remote_user: ubuntu
    become: true
    vars:
-     ansible_ssh_private_key_file: ~/Downloads/ssh-1.pem
+     ansible_ssh_private_key_file: ~/ssh-1.pem
    tasks:
+     - name: Create private key
+       copy: content="{{ ssh_private_key }}" dest="{{ ansible_ssh_private_key_file }}" mode=0600
      - name: Install JDK 8
        apt:
          name: openjdk-11-jdk-headless
@@ -58,7 +60,7 @@
    gather_facts: true
    remote_user: ubuntu
    vars:
-     ansible_ssh_private_key_file: ~/Downloads/ssh-1.pem
+     ansible_ssh_private_key_file: ~/ssh-1.pem
    tasks:
      - name: Copy test
        ansible.builtin.copy:
@@ -76,7 +78,7 @@
    gather_facts: true
    remote_user: ubuntu
    vars:
-     ansible_ssh_private_key_file: ~/Downloads/ssh-1.pem
+     ansible_ssh_private_key_file: ~/ssh-1.pem
    tasks:
      - name: Execute gradlew test
        shell:
@@ -90,7 +92,7 @@
    gather_facts: true
    remote_user: ubuntu
    vars:
-     ansible_ssh_private_key_file: ~/Downloads/ssh-1.pem
+     ansible_ssh_private_key_file: ~/ssh-1.pem
    tasks:
      - name: Archive test reports
        archive:
