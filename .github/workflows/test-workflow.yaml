@@ -10,9 +10,6 @@ jobs:
     - name: install python
       uses: actions/setup-python@v1
 
-    - name: install python
-      uses: actions/setup-python@v1
-
     - name: install ansible
       uses: BSFishy/pip-action@v1
       with:
