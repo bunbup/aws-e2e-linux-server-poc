@@ -13,6 +13,9 @@ jobs:
         FILE_NAME: "ssh-1.pem"
         FILE_DATA: "${{ secrets.SSH_PRIVATE_KEY }}"
     
+    - name: set private key permissions
+      run: chmod 600 ssh-1.pem 
+      
     - name: verify key 1
       run: ls -al . 
     
